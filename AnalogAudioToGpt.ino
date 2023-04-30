@@ -18,7 +18,7 @@ const char* password = "PennyLuke5776$";
 const char* server_url = "http://10.0.0.106:5000/upload";
 
 
-const bool mode1Wifi = true;
+const bool modeWifi = true;
 
 void setup() {
   Serial.begin(115200);
@@ -32,14 +32,13 @@ void setup() {
   }
   Serial.println("Card initialized.");
 
-  if(!mode1Wifi){
-    WiFi.begin(ssid, password);
+  WiFi.begin(ssid, password);
 
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(1000);
-      Serial.println("Connecting to WiFi...");
-    }
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
   }
+  Serial.println("Connected to WiFi");
 
 }
 
@@ -61,6 +60,8 @@ void loop() {
 
 void startRecording() {
   if (!recording) {
+    WiFi.disconnect(true);
+    WiFi.mode(WIFI_OFF);
     recording = true;
     startTime = micros();
     Serial.println("Recording started.");
@@ -97,15 +98,12 @@ void saveAudioData() {
 String sendFileToServer(const String &filename) {
   String payload;
 
-  if(mode1Wifi){
-    WiFi.begin(ssid, password);
+  WiFi.begin(ssid, password);
 
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(1000);
-      Serial.println("Connecting to WiFi...");
-    }
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
   }
-
   Serial.println("Connected to WiFi");
 
   File audio = SD.open(filename.c_str());
@@ -145,10 +143,8 @@ String sendFileToServer(const String &filename) {
   http.end();
   audio.close();
 
-  if(mode1Wifi){
-    WiFi.disconnect(true);
-    WiFi.mode(WIFI_OFF);
-  }
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_OFF);
 
   return message;
 }
