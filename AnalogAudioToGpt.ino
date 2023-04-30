@@ -2,6 +2,7 @@
 #include <HTTPClient.h>
 #include <SdFat.h>
 #include <SPI.h>
+#include <ArduinoJson.h>
 
 const int chipSelect = 15; // SD card CS pin
 const int micPin = A1;
@@ -16,6 +17,9 @@ const char* ssid = "TheLanai";
 const char* password = "PennyLuke5776$";
 const char* server_url = "http://10.0.0.106:5000/upload";
 
+
+const bool mode1Wifi = true;
+
 void setup() {
   Serial.begin(115200);
   while (!Serial) {}
@@ -27,6 +31,16 @@ void setup() {
     while (1);
   }
   Serial.println("Card initialized.");
+
+  if(!mode1Wifi){
+    WiFi.begin(ssid, password);
+
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(1000);
+      Serial.println("Connecting to WiFi...");
+    }
+  }
+
 }
 
 void loop() {
@@ -80,29 +94,16 @@ void saveAudioData() {
   }
 }
 
-String extractMessage(const String &json) {
-  String message_key = "\"message\":";
-  int start = json.indexOf(message_key);
-  if (start == -1) {
-    return "";
-  }
-
-  start += message_key.length();
-  int end = json.indexOf("\"", start + 1);
-  if (end == -1) {
-    return "";
-  }
-
-  return json.substring(start + 1, end);
-}
-
 String sendFileToServer(const String &filename) {
   String payload;
-  WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
+  if(mode1Wifi){
+    WiFi.begin(ssid, password);
+
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(1000);
+      Serial.println("Connecting to WiFi...");
+    }
   }
 
   Serial.println("Connected to WiFi");
@@ -128,17 +129,26 @@ String sendFileToServer(const String &filename) {
     Serial.println(httpCode);
   }
 
-  // Extract the "message" value
-  String message = extractMessage(payload)
+  StaticJsonDocument<256> json_doc;
+  DeserializationError error = deserializeJson(json_doc, payload);
 
+  if (error) {
+    Serial.print(F("Failed to parse JSON: "));
+    Serial.println(error.c_str());
+    return "Error";
+  }
+
+  String message = json_doc["message"];
   // Print the extracted value
   Serial.println(message);
 
   http.end();
   audio.close();
 
-  WiFi.disconnect(true);
-  WiFi.mode(WIFI_OFF);
+  if(mode1Wifi){
+    WiFi.disconnect(true);
+    WiFi.mode(WIFI_OFF);
+  }
 
   return message;
 }
