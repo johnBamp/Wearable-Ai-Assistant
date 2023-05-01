@@ -6,7 +6,7 @@ import numpy as np
 import os
 import openai
 
-openai.api_key = "API-KEY"
+openai.api_key = "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"
 
 def change_pitch(data, pitch_factor):
     indices = np.round(np.arange(0, len(data), pitch_factor))
@@ -20,8 +20,8 @@ input_file = "C:\\Users\\John\\PycharmProjects\\pythonProject9\\uploaded_files\\
 #input_file = "G:\\audio.raw"
 
 output_file = 'audio.wav'
-sample_rate = 32000
-pitch_factor = 0.4 # Change the pitch. Use values <1.0 for lower pitch, >1.0 for higher pitch
+sample_rate = 16000
+pitch_factor = 0.6 # Change the pitch. Use values <1.0 for lower pitch, >1.0 for higher pitch
 volume_factor = 1.5  # Change the volume. Use values <1.0 for lower volume, >1.0 for higher volume
 
 app = Flask(__name__)
@@ -84,3 +84,4 @@ def upload_file():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
