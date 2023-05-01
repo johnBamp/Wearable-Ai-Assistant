@@ -11,8 +11,8 @@
 #define TFT_DC 32
 #define SD_CS 15
 
-const char* ssid = "TheLanai";
-const char* password = "PennyLuke5776$";
+const char* ssid = " ";
+const char* password = " ";
 
 SdFat SD;
 SdFile rawFile;
