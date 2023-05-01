@@ -6,7 +6,7 @@ import numpy as np
 import os
 import openai
 
-openai.api_key = "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"
+openai.api_key = ""
 
 def change_pitch(data, pitch_factor):
     indices = np.round(np.arange(0, len(data), pitch_factor))
