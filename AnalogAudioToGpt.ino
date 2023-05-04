@@ -6,13 +6,15 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
 #include <Adafruit_FT6206.h>
+#include <WiFi.h>
+#include "time.h"
 
 #define TFT_CS 14
 #define TFT_DC 32
 #define SD_CS 15
 
-const char* ssid = " ";
-const char* password = " ";
+const char* ssid = "JOHNSALIENWARE";
+const char* password = "$2T3b583";
 
 SdFat SD;
 SdFile rawFile;
@@ -33,7 +35,7 @@ class aiAssistant{
     bool record = false;
     bool state = 0;
 
-    const char* server_url = "http://10.0.0.106:5000/upload";
+    const char* server_url = "http://162.248.161.148:5000/upload";
 
 
     void startRecording() {
